@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduCursos - Desarrolla tus habilidades tech</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
+  <nav class="nav">
+    <a href="index.html" class="activo">Inicio</a>
+    <a href="cursos.html">Cursos</a>
+    <a href="login.html">Entrar</a>
+    <a href="registro.html">Registro</a>
+    <a href="estudiante/dashboard.html">Estudiante</a>
+    <a href="instructor/dashboard.html">Instructor</a>
+    <a href="admin/dashboard.html">Admin</a>
+    <a href="mensajes.html">Mensajes</a>
+    <a href="perfil.html">Perfil</a>
+  </nav>
+</header>
+
+<div class="contenedor">
+  <!-- 1. Hero estilo EduCursos -->
+  <section class="hero">
+    <p class="eyebrow">Aprende a tu ritmo</p>
+    <h1>Tu futuro comienza<br><span>con un curso</span></h1>
+    <p>En EduCursos encontraras una amplia variedad de cursos en linea para desarrollar nuevas habilidades, mejorar tu perfil profesional y alcanzar tus metas.</p>
+    <form class="buscador-hero" onsubmit="return buscarDesdeHero(event)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="#6b7280" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/></svg>
+      <input type="text" id="hero-q" placeholder="Busca un curso...">
+      <button class="btn" type="submit">Buscar</button>
+    </form>
+    <div class="stats-row">
+      <div class="stat"><b>5</b><span>cursos activos</span></div>
+      <div class="stat"><b>1,200+</b><span>estudiantes</span></div>
+      <div class="stat"><b>3</b><span>rutas de aprendizaje</span></div>
+      <div class="stat"><b>4.8</b><span>calificacion promedio</span></div>
+    </div>
+  </section>
+
+  <br>
+
+  <!-- 2. Beneficios -->
+  <div class="tarjeta">
+    <div class="beneficios">
+      <div class="beneficio">
+        <span class="beneficio-icono"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 5v14l11-7L8 5z" stroke="#000" stroke-width="2" stroke-linejoin="round"/></svg></span>
+        <div><h3>Aprende en linea</h3><p class="meta">Desde cualquier lugar y en cualquier momento.</p></div>
+      </div>
+      <div class="beneficio">
+        <span class="beneficio-icono"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="5" stroke="#000" stroke-width="2"/><path d="M8.5 13.5L7 21l5-2.5L17 21l-1.5-7.5" stroke="#000" stroke-width="2" stroke-linejoin="round"/></svg></span>
+        <div><h3>Certificados</h3><p class="meta">Valida tus conocimientos y potencia tu CV.</p></div>
+      </div>
+      <div class="beneficio">
+        <span class="beneficio-icono"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#000" stroke-width="2"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <div><h3>Instructores expertos</h3><p class="meta">Aprende de profesionales en cada area.</p></div>
+      </div>
+      <div class="beneficio">
+        <span class="beneficio-icono"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" stroke="#000" stroke-width="2" stroke-linejoin="round"/></svg></span>
+        <div><h3>Acceso inmediato</h3><p class="meta">Empieza hoy mismo tu curso favorito.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+
+  <!-- 2. Rutas de aprendizaje -->
+  <div class="seccion-titulo"><h2>Rutas de aprendizaje</h2><a href="cursos.html">Ver catalogo</a></div>
+  <p class="meta">Avanza por objetivo profesional, de principiante a avanzado, como los Paths de Pluralsight.</p>
+  <div id="rutas"></div>
+
+  <!-- 3. Cursos en tendencia -->
+  <div class="seccion-titulo"><h2>Mejor calificados</h2><a href="cursos.html">Ver todos</a></div>
+  <div id="destacados-mejor"></div>
+
+  <div class="seccion-titulo"><h2>Mas vendidos</h2><a href="cursos.html">Ver todos</a></div>
+  <div id="destacados-vendidos"></div>
+
+  <div class="seccion-titulo"><h2>Mas recientes</h2><a href="cursos.html">Ver todos</a></div>
+  <div id="destacados-recientes"></div>
+
+  <!-- 4. Planes -->
+  <div class="seccion-titulo"><h2>Planes</h2><a href="registro.html">Comparar</a></div>
+  <div class="planes">
+    <div class="tarjeta plan">
+      <h3>Gratis</h3>
+      <p class="precio">$0.00</p>
+      <ul>
+        <li>Cursos y niveles gratis</li>
+        <li>Avance por curso</li>
+        <li>Certificado digital</li>
+      </ul>
+      <p><a class="btn btn-secundario" href="registro.html">Empezar gratis</a></p>
+    </div>
+    <div class="tarjeta plan plan-destacado">
+      <h3>Estandar</h3>
+      <p class="precio">$299.00<span class="meta"> / mes</span></p>
+      <ul>
+        <li>Todos los cursos de pago</li>
+        <li>Rutas completas</li>
+        <li>Mensajes con instructores</li>
+      </ul>
+      <p><a class="btn" href="registro.html">Elegir Estandar</a></p>
+    </div>
+    <div class="tarjeta plan">
+      <h3>Premium</h3>
+      <p class="precio">$499.00<span class="meta"> / mes</span></p>
+      <ul>
+        <li>Todo lo del Estandar</li>
+        <li>Diplomas verificables</li>
+        <li>Soporte prioritario</li>
+      </ul>
+      <p><a class="btn btn-secundario" href="registro.html">Elegir Premium</a></p>
+    </div>
+  </div>
+
+  <!-- 5. Testimonios -->
+  <div class="seccion-titulo"><h2>Lo que dicen los estudiantes</h2></div>
+  <div class="grid-2-col">
+    <div class="tarjeta">
+      <p><span class="estrellas">★★★★★</span></p>
+      <p>"Termine JavaScript en 3 semanas y obtuve mi diploma. Los niveles con video hacen todo mas claro."</p>
+      <p class="meta">Persona 1 · Estudiante</p>
+    </div>
+    <div class="tarjeta">
+      <p><span class="estrellas">★★★★★</span></p>
+      <p>"Publico mis cursos por niveles y veo mis ventas desglosadas por forma de pago. Muy directo."</p>
+      <p class="meta">Instructor 1 · Instructor</p>
+    </div>
+  </div>
+  <br>
+
+  <!-- 6. Acceso por rol (demo) -->
+  <div class="tarjeta">
+    <h3>Entrar por rol (demo: Demo*123)</h3>
+    <p>
+      <a class="btn" href="estudiante/dashboard.html">Estudiante</a>
+      <a class="btn" href="instructor/dashboard.html">Instructor</a>
+      <a class="btn" href="admin/dashboard.html">Admin</a>
+    </p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-cols">
+    <div class="logo"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
+    <div style="text-align:center;"><a href="index.html">Inicio</a> &nbsp;&nbsp; <a href="cursos.html">Cursos</a> &nbsp;&nbsp; <a href="mensajes.html">Contacto</a></div>
+    <div class="social"><a href="index.html" title="Facebook">f</a><a href="index.html" title="Instagram">IG</a><a href="index.html" title="YouTube">YT</a><a href="index.html" title="X">X</a></div>
+  </div>
+  <p class="meta copyright">© 2026 EduCursos. Todos los derechos reservados.</p>
+</footer>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>

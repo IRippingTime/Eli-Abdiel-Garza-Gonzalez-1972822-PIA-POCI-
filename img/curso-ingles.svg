@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#10243e"/>
+  <rect x="80" y="90" width="300" height="200" rx="24" fill="#ffffff"/>
+  <text x="120" y="220" font-family="Arial, sans-serif" font-size="110" font-weight="bold" fill="#ea580c">EN</text>
+  <rect x="420" y="120" width="280" height="26" rx="13" fill="#ff6b00"/>
+  <rect x="460" y="165" width="240" height="26" rx="13" fill="#ffffff" opacity="0.7"/>
+  <rect x="420" y="210" width="280" height="26" rx="13" fill="#ffffff" opacity="0.4"/>
+  <text x="80" y="360" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#ffffff">Tech English</text>
+  <text x="80" y="405" font-family="Arial, sans-serif" font-size="26" fill="#cccccc">Idiomas · Todos los niveles</text>
+</svg>

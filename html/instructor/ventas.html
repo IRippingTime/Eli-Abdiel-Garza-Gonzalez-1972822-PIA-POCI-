@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventas - EduCursos</title>
+<link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
+  <nav class="nav">
+    <a href="../index.html">Inicio</a>
+    <a href="../cursos.html">Cursos</a>
+    <a href="../login.html">Entrar</a>
+    <a href="../registro.html">Registro</a>
+    <a href="../estudiante/dashboard.html">Estudiante</a>
+    <a href="dashboard.html" class="activo">Instructor</a>
+    <a href="../admin/dashboard.html">Admin</a>
+    <a href="../mensajes.html">Mensajes</a>
+    <a href="../perfil.html">Perfil</a>
+  </nav>
+</header>
+<div class="contenedor">
+  <div class="page-hero">
+    <span class="rol-pill">Instructor</span>
+    <h2>Ventas de mis cursos</h2>
+    <p class="meta">Resumen por curso y detalle por alumno, con montos en moneda y fechas.</p>
+    <p><a class="btn btn-secundario" href="dashboard.html">Volver a mis cursos</a></p>
+  </div>
+  <div class="stat-cards">
+    <div class="stat-card"><b>200</b><span>Alumnos en total</span></div>
+    <div class="stat-card"><b class="naranja">$155,800.00</b><span>Ingresos totales</span></div>
+    <div class="stat-card"><b>2</b><span>Formas de pago</span></div>
+  </div>
+  <div class="tarjeta">
+    <div class="filtros">
+      <div><label>Creacion desde</label><input type="date" value="2026-08-01"></div>
+      <div><label>Creacion hasta</label><input type="date" value="2026-09-19"></div>
+      <div><label>Categoria</label><select><option>Todas</option><option>IT &amp; Software</option></select></div>
+      <div><label>Estado</label><select><option>Todos</option><option>Solo activos</option></select></div>
+    </div>
+    <br>
+    <table>
+      <tr><th>Curso</th><th>Alumnos inscritos</th><th>Nivel promedio</th><th>Total ingresos</th></tr>
+      <tbody id="ventas-body"></tbody>
+    </table>
+    <p id="ventas-total"></p>
+  </div>
+  <br>
+  <div class="tarjeta">
+    <h2>Ventas - Vista 2: Detalle por alumno (curso: PHP desde Cero)</h2>
+    <table>
+      <tr><th>Alumno</th><th>Fecha inscripcion</th><th>Nivel avance</th><th>Precio pagado</th><th>Forma de pago</th></tr>
+      <tr><td>Persona 1</td><td>18 ago 2026</td><td>3 de 5</td><td>$899.00</td><td>Tarjeta</td></tr>
+      <tr><td>Persona 2</td><td>20 ago 2026</td><td>5 de 5</td><td>$899.00</td><td>Transferencia</td></tr>
+      <tr><td colspan="3"><strong>Total ingresos del curso</strong></td><td colspan="2"><strong>$1,798.00</strong></td></tr>
+    </table>
+    <p class="meta">Montos con simbolo de moneda, coma de miles y dos decimales. Fechas: dia, tres letras del mes y ano.</p>
+  </div>
+</div>
+<footer>Reporte de ventas del instructor en sus dos vistas</footer>
+<script src="../../js/data.js"></script>
+<script src="../../js/app.js"></script>
+</body>
+</html>

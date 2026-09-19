@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensajes - EduCursos</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
+  <nav class="nav">
+    <a href="index.html">Inicio</a>
+    <a href="cursos.html">Cursos</a>
+    <a href="login.html">Entrar</a>
+    <a href="registro.html">Registro</a>
+    <a href="estudiante/dashboard.html">Estudiante</a>
+    <a href="instructor/dashboard.html">Instructor</a>
+    <a href="admin/dashboard.html">Admin</a>
+    <a href="mensajes.html" class="activo">Mensajes</a>
+    <a href="perfil.html">Perfil</a>
+  </nav>
+</header>
+<div class="contenedor" style="max-width:960px;">
+  <div class="page-hero">
+    <span class="rol-pill">Mensajes</span>
+    <h2>Bandeja de entrada</h2>
+    <p class="meta">Preguntas privadas entre alumno e instructor, con fecha, nombre y avatar.</p>
+  </div>
+  <br>
+  <div class="tarjeta" style="padding:0;overflow:hidden;">
+    <div class="bandeja">
+      <div class="conversaciones" id="lista-conv"></div>
+      <div class="hilo">
+        <div class="hilo-head" id="hilo-head"></div>
+        <div class="chat" id="hilo-msgs" style="padding:16px;"></div>
+        <form class="hilo-responder" onsubmit="return enviarMensaje(event)">
+          <input type="text" id="nuevo-msg" placeholder="Escribe tu mensaje...">
+          <button class="btn" type="submit">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>Mensajeria privada por curso</footer>
+<script>
+const HILOS = [
+  {
+    nombre: "Instructor 1", avatar: "I1", clase: "inst", curso: "PHP desde Cero con POO y MVC",
+    fecha: "12 sep 2026, 10:02", leido: false,
+    mensajes: [
+      { propio: false, quien: "Persona 1", avatar: "P1", clase: "", fecha: "12 sep 2026, 09:15", texto: "Hola, el nivel 3 incluye el video del proyecto MVC?" },
+      { propio: true, quien: "Instructor 1", avatar: "I1", clase: "inst", fecha: "12 sep 2026, 10:02", texto: "Si, incluye video obligatorio y PDF adjunto con el codigo base." }
+    ]
+  },
+  {
+    nombre: "Instructor 2", avatar: "I2", clase: "inst", curso: "Marketing Digital para Creadores",
+    fecha: "10 sep 2026, 17:40", leido: false,
+    mensajes: [
+      { propio: false, quien: "Persona 1", avatar: "P1", clase: "", fecha: "10 sep 2026, 16:20", texto: "El curso tiene certificado al terminar los 3 niveles?" },
+      { propio: true, quien: "Instructor 2", avatar: "I2", clase: "inst", fecha: "10 sep 2026, 17:40", texto: "Si, al completar todos los niveles se genera tu diploma automaticamente." }
+    ]
+  }
+];
+let hiloActual = 0;
+
+function burbuja(m) {
+  return '<div class="mensaje msg ' + (m.propio ? "msg-propio" : "msg-otro") + '">' +
+    '<div class="mensaje-header"><span class="avatar ' + m.clase + '">' + m.avatar + '</span>' +
+    '<div><strong>' + m.quien + '</strong><br><span class="fecha-hora">' + m.fecha + '</span></div></div>' +
+    '<p>' + m.texto + '</p></div>';
+}
+
+function renderConversaciones() {
+  document.getElementById("lista-conv").innerHTML = HILOS.map(function (h, i) {
+    const ultimo = h.mensajes[h.mensajes.length - 1];
+    return '<button class="conv' + (i === hiloActual ? " activo" : "") + '" onclick="abrirHilo(' + i + ')">' +
+      '<span class="avatar ' + h.clase + '">' + h.avatar + '</span>' +
+      '<span class="conv-texto"><strong>' + h.nombre + '</strong>' +
+      '<span class="meta">' + h.curso + '</span>' +
+      '<span class="meta">' + ultimo.texto.substring(0, 38) + '...</span></span>' +
+      (h.leido ? "" : '<span class="punto-no-leido" title="No leido"></span>') +
+      '</button>';
+  }).join("");
+}
+
+function renderHilo() {
+  const h = HILOS[hiloActual];
+  document.getElementById("hilo-head").innerHTML =
+    '<span class="avatar ' + h.clase + '">' + h.avatar + '</span>' +
+    '<div><strong>' + h.nombre + '</strong><br><span class="meta">' + h.curso + '</span></div>';
+  document.getElementById("hilo-msgs").innerHTML = h.mensajes.map(burbuja).join("");
+}
+
+function abrirHilo(i) {
+  hiloActual = i;
+  HILOS[i].leido = true;
+  renderConversaciones();
+  renderHilo();
+}
+
+function enviarMensaje(event) {
+  event.preventDefault();
+  const box = document.getElementById("nuevo-msg");
+  const texto = box.value.trim();
+  if (!texto) return false;
+  HILOS[hiloActual].mensajes.push({ propio: false, quien: "Persona 1", avatar: "P1", clase: "", fecha: "hoy", texto: texto });
+  box.value = "";
+  renderHilo();
+  renderConversaciones();
+  return false;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  renderConversaciones();
+  renderHilo();
+});
+</script>
+</body>
+</html>
