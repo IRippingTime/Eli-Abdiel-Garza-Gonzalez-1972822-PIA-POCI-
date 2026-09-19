@@ -1,6 +1,6 @@
-#Integrantes del equipo:
-#Nombre: Elí Abdiel Garza González 
-#Matricula: 1972822
+# Integrantes del equipo:
+# Nombre: Elí Abdiel Garza González 
+# Matricula: 1972822
 
 # EduCursos - Portal de Cursos en Linea | Primer Avance (PIA POCI)
 
