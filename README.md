@@ -26,7 +26,7 @@ Luego abre `http://localhost:8000/index.html` y la ruta base `http://localhost:8
 ## Separacion de archivos por tipo
 
 - HTML: `html/` + `html/estudiante/`, `html/instructor/`, `html/admin/`
-- CSS: `css/styles.css` (tema negro / blanco / naranja, sin frameworks externos)
+- CSS: `css/styles.css` 
 - JS: `js/data.js` (mock), `js/app.js` (listados y filtros), `js/validaciones.js` (login, registro, perfil, curso)
 - PHP ruta base: `api/index.php`
 - Documentos Word para entregar: `docs/word/Documentacion-Completa.docx` (todo en uno, por partes)
