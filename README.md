@@ -1,7 +1,5 @@
 # EduCursos - Portal de Cursos en Linea | Primer Avance (PIA POCI)
 
-Prototipo HTML + CSS + JS + documentos de la primera entrega obligatoria.
-
 ## Como abrir el prototipo
 
 Opcion 1 (simple): abre `index.html` en el navegador.
