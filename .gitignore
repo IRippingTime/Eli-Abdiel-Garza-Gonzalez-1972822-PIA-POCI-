@@ -1,0 +1,9 @@
+# Configuración local y secretos
+/config/.env
+/config/.env.local
+*.log
+.DS_Store
+Thumbs.db
+
+# Credenciales locales de demostración en texto plano
+/importante.txt
