@@ -1,8 +1,4 @@
-/* Validaciones del lado del cliente - Primer Avance
-   Regla de contrasena: minimo 8 caracteres, una mayuscula, un numero y un caracter especial.
-   Caracter especial = simbolo que no sea letra ni numero.
-*/
-
+/* Validaciones del navegador; toda regla crítica también se verifica en PHP. */
 const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -10,151 +6,161 @@ function mostrarError(id, mensaje) {
   const el = document.getElementById(id);
   if (el) el.textContent = mensaje || "";
 }
-
 function validarPassword(valor) {
-  if (!valor) return "La contrasena es obligatoria.";
-  if (valor.length < 8) return "Minimo 8 caracteres.";
-  if (!/[A-Z]/.test(valor)) return "Debe incluir al menos una mayuscula.";
-  if (!/\d/.test(valor)) return "Debe incluir al menos un numero.";
-  if (!/[^A-Za-z0-9]/.test(valor)) return "Debe incluir al menos un caracter especial.";
+  if (!valor) return "La contraseña es obligatoria.";
+  if (!PASSWORD_REGEX.test(valor)) return "Usa al menos 8 caracteres, una mayúscula, un número y un símbolo.";
   return "";
 }
+function valor(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : "";
+}
 
-function validarLogin(event) {
+async function validarLogin(event) {
   event.preventDefault();
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value;
+  const email = valor("email");
+  const password = document.getElementById("password").value;
   let ok = true;
-
-  if (!email) { mostrarError("err-email", "El correo es obligatorio."); ok = false; }
-  else if (!EMAIL_REGEX.test(email)) { mostrarError("err-email", "Formato de correo no valido."); ok = false; }
+  if (!EMAIL_REGEX.test(email)) { mostrarError("err-email", "Escribe un correo válido."); ok = false; }
   else mostrarError("err-email", "");
-
-  if (!pass) { mostrarError("err-password", "La contrasena es obligatoria."); ok = false; }
+  if (!password) { mostrarError("err-password", "La contraseña es obligatoria."); ok = false; }
   else mostrarError("err-password", "");
+  if (!ok) { mostrarAviso("aviso-login", "Revisa los campos marcados."); return false; }
 
-  const aviso = document.getElementById("aviso-login");
-  if (!ok) {
-    if (aviso) { aviso.className = "alerta alerta-error"; aviso.textContent = "Revisa los campos marcados."; }
+  const button = event.submitter;
+  if (button) button.disabled = true;
+  try {
+    const result = await apiRequest("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+    const verifiedSession = await apiRequest("/auth/me");
+    const user = verifiedSession.data.user;
+    localStorage.setItem("educursos_user", JSON.stringify(user));
+    mostrarAviso("aviso-login", "Sesión iniciada. Abriendo tu panel…", "ok");
+    const destinations = { estudiante: "estudiante/dashboard.html", instructor: "instructor/dashboard.html", administrador: "admin/dashboard.html" };
+    setTimeout(() => { window.location.href = destinations[user.role] || "index.html"; }, 350);
+  } catch (error) {
+    mostrarAviso("aviso-login", error.message);
+  } finally {
+    if (button) button.disabled = false;
+  }
+  return false;
+}
+
+async function validarRegistro(event) {
+  event.preventDefault();
+  const data = {
+    full_name: valor("nombre"),
+    gender: valor("genero"),
+    birth_date: valor("nacimiento"),
+    email: valor("email"),
+    password: document.getElementById("password").value,
+    role: valor("rol")
+  };
+  const password2 = document.getElementById("password2").value;
+  let ok = true;
+  if (data.full_name.length < 3) { mostrarError("err-nombre", "Escribe tu nombre completo."); ok = false; } else mostrarError("err-nombre", "");
+  if (!data.gender) { mostrarError("err-genero", "Selecciona tu género."); ok = false; } else mostrarError("err-genero", "");
+  if (!data.birth_date) { mostrarError("err-nacimiento", "Selecciona tu fecha de nacimiento."); ok = false; } else mostrarError("err-nacimiento", "");
+  if (!EMAIL_REGEX.test(data.email)) { mostrarError("err-email", "Escribe un correo válido."); ok = false; } else mostrarError("err-email", "");
+  const passError = validarPassword(data.password);
+  mostrarError("err-password", passError);
+  if (passError) ok = false;
+  if (password2 !== data.password) { mostrarError("err-password2", "Las contraseñas no coinciden."); ok = false; } else mostrarError("err-password2", "");
+  if (!data.role) { mostrarError("err-rol", "Selecciona un rol."); ok = false; } else mostrarError("err-rol", "");
+  if (!ok) { mostrarAviso("aviso-registro", "Corrige los campos marcados."); return false; }
+
+  try {
+    const result = await apiRequest("/auth/register", { method: "POST", body: JSON.stringify(data) });
+    mostrarAviso("aviso-registro", result.message + " Ya puedes iniciar sesión.", "ok");
+    document.getElementById("form-registro").reset();
+  } catch (error) {
+    mostrarAviso("aviso-registro", error.message);
+  }
+  return false;
+}
+
+async function validarPerfil(event) {
+  event.preventDefault();
+  const data = {
+    full_name: valor("nombre"),
+    gender: valor("genero"),
+    birth_date: valor("nacimiento"),
+    avatar_url: valor("avatar_url")
+  };
+  if (data.full_name.length < 3 || !data.gender || !data.birth_date) {
+    mostrarAviso("aviso-perfil", "Completa nombre, género y fecha de nacimiento.");
     return false;
   }
-  // Prototipo: simula bloqueo tras 3 intentos (contador en localStorage)
-  let intentos = parseInt(localStorage.getItem("intentos_login") || "0", 10);
-  if (pass !== "Demo*123") {
-    intentos += 1;
-    localStorage.setItem("intentos_login", String(intentos));
-    if (aviso) {
-      aviso.className = "alerta alerta-error";
-      aviso.textContent = intentos >= 3
-        ? "Cuenta deshabilitada por 3 intentos fallidos consecutivos. Contacta al administrador."
-        : "Credenciales incorrectas. Intento " + intentos + " de 3. (Demo usa: Demo*123)";
-    }
-    return false;
+  try {
+    const file = document.getElementById("avatar_file")?.files?.[0];
+    if (file) data.avatar_url = await subirImagen(file);
+    const result = await apiRequest("/profile", { method: "PUT", body: JSON.stringify(data) });
+    const refreshedProfile = await apiRequest("/profile");
+    if (typeof renderProfileHeader === "function") renderProfileHeader(refreshedProfile.data);
+    document.getElementById("nombre").value = refreshedProfile.data.full_name || "";
+    document.getElementById("email").value = refreshedProfile.data.email || "";
+    document.getElementById("genero").value = refreshedProfile.data.gender || "";
+    document.getElementById("nacimiento").value = refreshedProfile.data.birth_date || "";
+    document.getElementById("avatar_url").value = refreshedProfile.data.avatar_url || "";
+    mostrarAviso("aviso-perfil", result.message, "ok");
+  } catch (error) {
+    mostrarAviso("aviso-perfil", error.message);
   }
-  localStorage.setItem("intentos_login", "0");
-  const rol = document.getElementById("rol").value;
-  localStorage.setItem("rol_demo", rol);
-  if (aviso) { aviso.className = "alerta alerta-ok"; aviso.textContent = "Acceso correcto. Redirigiendo como " + rol + "..."; }
-  setTimeout(function () {
-    if (rol === "estudiante") window.location.href = "estudiante/dashboard.html";
-    else if (rol === "instructor") window.location.href = "instructor/dashboard.html";
-    else window.location.href = "admin/dashboard.html";
-  }, 800);
   return false;
 }
 
-function validarRegistro(event) {
-  event.preventDefault();
-  let ok = true;
-
-  const nombre = document.getElementById("nombre").value.trim();
-  const genero = document.getElementById("genero").value;
-  const nacimiento = document.getElementById("nacimiento").value;
-  const email = document.getElementById("email").value.trim();
-  const pass = document.getElementById("password").value;
-  const pass2 = document.getElementById("password2").value;
-  const rol = document.getElementById("rol").value;
-
-  if (!nombre) { mostrarError("err-nombre", "El nombre completo es obligatorio."); ok = false; }
-  else mostrarError("err-nombre", "");
-
-  if (!genero) { mostrarError("err-genero", "Selecciona el genero."); ok = false; }
-  else mostrarError("err-genero", "");
-
-  if (!nacimiento) { mostrarError("err-nacimiento", "La fecha de nacimiento es obligatoria."); ok = false; }
-  else mostrarError("err-nacimiento", "");
-
-  if (!email) { mostrarError("err-email", "El correo es obligatorio."); ok = false; }
-  else if (!EMAIL_REGEX.test(email)) { mostrarError("err-email", "Formato de correo no valido."); ok = false; }
-  else mostrarError("err-email", "");
-
-  const errPass = validarPassword(pass);
-  mostrarError("err-password", errPass);
-  if (errPass) ok = false;
-
-  if (pass !== pass2) { mostrarError("err-password2", "Las contrasenas no coinciden."); ok = false; }
-  else mostrarError("err-password2", "");
-
-  if (!rol) { mostrarError("err-rol", "Selecciona un rol."); ok = false; }
-  else mostrarError("err-rol", "");
-
-  const aviso = document.getElementById("aviso-registro");
-  if (!ok) {
-    if (aviso) { aviso.className = "alerta alerta-error"; aviso.textContent = "Corrige los errores del formulario."; }
-    return false;
+function actualizarCamposNivel() {
+  const container = document.getElementById("video-niveles");
+  const count = Math.min(20, Math.max(1, Number(valor("niveles")) || 1));
+  if (!container) return;
+  container.innerHTML = "";
+  for (let i = 1; i <= count; i++) {
+    const section = document.createElement("div");
+    section.className = "tarjeta";
+    section.innerHTML = '<h3>Nivel ' + i + '</h3>' +
+      '<label for="nivel-titulo-' + i + '">Título</label><input id="nivel-titulo-' + i + '" required value="Nivel ' + i + '">' +
+      '<label for="nivel-video-' + i + '">URL HTTPS del video</label><input id="nivel-video-' + i + '" type="url" required placeholder="https://...">' +
+      '<label for="nivel-desc-' + i + '">Descripción del nivel</label><textarea id="nivel-desc-' + i + '" rows="2"></textarea>';
+    container.appendChild(section);
   }
-  if (aviso) { aviso.className = "alerta alerta-ok"; aviso.textContent = "Registro valido. Cuenta creada como " + rol + ". Ya puedes iniciar sesion."; }
-  document.getElementById("form-registro").reset();
-  return false;
 }
 
-function validarPerfil(event) {
+async function validarCurso(event) {
   event.preventDefault();
-  const nombre = document.getElementById("nombre").value.trim();
-  const email = document.getElementById("email").value.trim();
+  const title = valor("titulo"), description = valor("descripcion");
+  const categoryId = Number(valor("categoria")), price = Number(valor("precio"));
+  const count = Math.min(20, Math.max(1, Number(valor("niveles")) || 1));
   let ok = true;
-  if (!nombre) { mostrarError("err-nombre", "El nombre es obligatorio."); ok = false; }
-  else mostrarError("err-nombre", "");
-  if (!EMAIL_REGEX.test(email)) { mostrarError("err-email", "Correo no valido."); ok = false; }
-  else mostrarError("err-email", "");
-  const aviso = document.getElementById("aviso-perfil");
-  if (!ok) { if (aviso) { aviso.className = "alerta alerta-error"; aviso.textContent = "Revisa los campos."; } return false; }
-  if (aviso) { aviso.className = "alerta alerta-ok"; aviso.textContent = "Perfil actualizado correctamente."; }
+  if (title.length < 5) { mostrarError("err-titulo", "Título mínimo de 5 caracteres."); ok = false; } else mostrarError("err-titulo", "");
+  if (!categoryId) { mostrarError("err-categoria", "Selecciona una categoría."); ok = false; } else mostrarError("err-categoria", "");
+  if (!Number.isFinite(price) || price < 0) { mostrarError("err-precio", "Indica un precio válido."); ok = false; } else mostrarError("err-precio", "");
+  if (description.length < 20) { mostrarError("err-descripcion", "Descripción mínima de 20 caracteres."); ok = false; } else mostrarError("err-descripcion", "");
+  const levels = [];
+  for (let i = 1; i <= count; i++) {
+    const levelTitle = valor("nivel-titulo-" + i);
+    const videoUrl = valor("nivel-video-" + i);
+    if (!levelTitle || !/^https:\/\//i.test(videoUrl)) ok = false;
+    levels.push({ title: levelTitle, description: valor("nivel-desc-" + i), video_url: videoUrl });
+  }
+  if (!ok) { mostrarAviso("aviso-curso", "Revisa los campos. Cada nivel requiere una URL HTTPS de video."); return false; }
+
+  const button = event.submitter;
+  if (button) button.disabled = true;
+  try {
+    const file = document.getElementById("imagen")?.files?.[0];
+    let imageUrl = "";
+    if (file) imageUrl = await subirImagen(file);
+    const result = await apiRequest("/courses", {
+      method: "POST",
+      body: JSON.stringify({ title, description, category_id: categoryId, price, levels, image_url: imageUrl || null })
+    });
+    mostrarAviso("aviso-curso", "Curso guardado en MySQL. Folio: " + result.data.id, "ok");
+    document.getElementById("form-curso").reset();
+    actualizarCamposNivel();
+  } catch (error) {
+    mostrarAviso("aviso-curso", error.message);
+  } finally {
+    if (button) button.disabled = false;
+  }
   return false;
 }
-
-function validarCurso(event) {
-  event.preventDefault();
-  let ok = true;
-  const titulo = document.getElementById("titulo").value.trim();
-  const categoria = document.getElementById("categoria").value;
-  const precio = document.getElementById("precio").value;
-  const niveles = document.getElementById("niveles").value;
-  const descripcion = document.getElementById("descripcion").value.trim();
-
-  if (titulo.length < 5) { mostrarError("err-titulo", "Titulo minimo de 5 caracteres."); ok = false; }
-  else mostrarError("err-titulo", "");
-  if (!categoria) { mostrarError("err-categoria", "Selecciona una categoria."); ok = false; }
-  else mostrarError("err-categoria", "");
-  if (precio === "" || isNaN(precio) || Number(precio) < 0) { mostrarError("err-precio", "Precio no valido. Usa 0 para gratis."); ok = false; }
-  else mostrarError("err-precio", "");
-  if (!niveles || Number(niveles) < 1) { mostrarError("err-niveles", "Minimo 1 nivel."); ok = false; }
-  else mostrarError("err-niveles", "");
-  if (descripcion.length < 20) { mostrarError("err-descripcion", "Descripcion minima de 20 caracteres."); ok = false; }
-  else mostrarError("err-descripcion", "");
-
-  const campoImagen = document.getElementById("imagen");
-  const archivo = campoImagen && campoImagen.files ? campoImagen.files[0] : null;
-  if (!archivo) { mostrarError("err-imagen", "Selecciona una imagen del curso desde tu computadora."); ok = false; }
-  else if (!archivo.type.startsWith("image/")) { mostrarError("err-imagen", "El archivo debe ser una imagen (JPG, PNG o SVG)."); ok = false; }
-  else mostrarError("err-imagen", "");
-
-  const aviso = document.getElementById("aviso-curso");
-  if (!ok) { if (aviso) { aviso.className = "alerta alerta-error"; aviso.textContent = "Corrige los errores."; } return false; }
-  if (aviso) { aviso.className = "alerta alerta-ok"; aviso.textContent = "Curso validado y guardado (prototipo). Cada nivel debera incluir un video obligatorio."; }
-  return false;
-}
-
-function confirmarEliminacion(mensaje) {
-  return confirm(mensaje || "Deseas eliminar este registro? Esta accion requiere confirmacion.");
-}
+document.addEventListener("DOMContentLoaded", actualizarCamposNivel);

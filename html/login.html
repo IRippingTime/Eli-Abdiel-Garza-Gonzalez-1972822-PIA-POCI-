@@ -24,32 +24,26 @@
 <div class="contenedor" style="max-width:520px;">
   <div class="tarjeta">
     <h2>Iniciar sesion</h2>
-    <p class="meta">Si te equivocas 3 veces consecutivas, la cuenta queda deshabilitada y solo un administrador puede reactivarla (prototipo).</p>
+    <p class="meta">Tras tres contraseñas incorrectas consecutivas, el administrador deberá reactivar la cuenta.</p>
     <div id="aviso-login"></div>
     <form onsubmit="return validarLogin(event)">
       <label for="email">Correo electronico</label>
       <input type="email" id="email" placeholder="usuario@correo.com">
       <span class="error-msg" id="err-email"></span>
 
-      <label for="password">Contrasena</label>
-      <input type="password" id="password" placeholder="Usa Demo*123 para entrar al demo">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" placeholder="Tu contraseña">
       <span class="error-msg" id="err-password"></span>
-
-      <label for="rol">Entrar como</label>
-      <select id="rol">
-        <option value="estudiante">Estudiante</option>
-        <option value="instructor">Instructor</option>
-        <option value="administrador">Administrador</option>
-      </select>
 
       <br><br>
       <button class="btn" type="submit">Ingresar</button>
-      <p class="ayuda">Contrasena demo valida: Demo*123 (8 caracteres, mayuscula, numero y caracter especial).</p>
       <p>No tienes cuenta? <a href="registro.html">Registrate aqui</a></p>
     </form>
   </div>
 </div>
 <footer>EduCursos - Autenticacion por rol</footer>
+<script src="../js/api-client.js"></script>
 <script src="../js/validaciones.js"></script>
 </body>
 </html>
+

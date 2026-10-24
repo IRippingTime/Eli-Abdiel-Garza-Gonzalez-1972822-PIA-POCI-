@@ -6,7 +6,7 @@
 <title>Crear curso - EduCursos</title>
 <link rel="stylesheet" href="../../css/styles.css">
 </head>
-<body>
+<body data-required-role="instructor">
 <header class="topbar">
   <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
   <nav class="nav">
@@ -25,13 +25,13 @@
   <div class="page-hero">
     <span class="rol-pill">Instructor</span>
     <h2>Ofrecer nuevo curso</h2>
-    <p class="meta">Define titulo, categoria, niveles y costo. Cada nivel llevara su video obligatorio.</p>
+    <p class="meta">Define titulo, categoria, niveles y costo. Cada nivel llevara su video obligatorio.</p><p id="session-notice" class="meta">Comprobando sesión…</p><p>Cuenta: <strong id="session-user">—</strong></p>
     <p><a class="btn btn-secundario" href="dashboard.html">Volver a mis cursos</a></p>
   </div>
   <br>
   <div class="tarjeta">
     <div id="aviso-curso"></div>
-    <form onsubmit="return validarCurso(event)">
+    <form id="form-curso" onsubmit="return validarCurso(event)">
       <label for="titulo">Titulo del curso</label>
       <input type="text" id="titulo" placeholder="Ej. PHP desde Cero con POO y MVC">
       <span class="error-msg" id="err-titulo"></span>
@@ -39,12 +39,12 @@
       <div class="form-grid">
         <div>
           <label for="categoria">Categoria</label>
-          <select id="categoria"><option value="">Seleccionar...</option><option>IT &amp; Software</option><option>Marketing</option><option>Design</option><option>Negocios</option><option>Idiomas</option></select>
+          <select id="categoria"><option value="">Cargando categorías...</option></select>
           <span class="error-msg" id="err-categoria"></span>
         </div>
         <div>
           <label for="niveles">Cantidad de niveles</label>
-          <input type="number" id="niveles" min="1" value="3">
+          <input type="number" id="niveles" min="1" max="20" value="1" oninput="actualizarCamposNivel()">
           <span class="error-msg" id="err-niveles"></span>
         </div>
       </div>
@@ -52,7 +52,7 @@
       <div class="form-grid">
         <div>
           <label for="precio">Costo curso completo (0 = gratis)</label>
-          <input type="number" id="precio" step="0.01" value="899.00">
+          <input type="number" id="precio" step="0.01" min="0" placeholder="0.00">
           <span class="error-msg" id="err-precio"></span>
         </div>
         <div>
@@ -60,7 +60,7 @@
           <input type="file" id="imagen" accept="image/*" onchange="previsualizarImagen(event)">
           <span class="error-msg" id="err-imagen"></span>
           <img id="vista-previa" class="vista-previa" alt="Vista previa de la portada">
-          <p class="ayuda">Formatos: JPG, PNG o SVG.</p>
+          <p class="ayuda">Formatos: JPG, PNG o WebP; máximo 5 MB. Requiere Cloudinary configurado.</p>
         </div>
       </div>
 
@@ -68,13 +68,18 @@
       <textarea id="descripcion" rows="4" placeholder="Minimo 20 caracteres"></textarea>
       <span class="error-msg" id="err-descripcion"></span>
 
+      <div id="video-niveles" class="grid-3"></div>
       <div class="alerta alerta-info">Contenido por nivel: texto, PDF adjunto, links externos, imagenes y <strong>un video obligatorio por nivel</strong>.</div>
       <button class="btn" type="submit">Guardar curso</button>
     </form>
   </div>
 </div>
 <footer>Instructor - validacion de curso en cliente</footer>
+<script src="../../js/api-client.js"></script>
+<script src="../../js/data.js"></script>
+<script src="../../js/app.js"></script>
 <script src="../../js/validaciones.js"></script>
+<script src="../../js/session-page.js"></script>
 <script>
 function previsualizarImagen(event) {
   const archivo = event.target.files[0];
@@ -87,3 +92,4 @@ function previsualizarImagen(event) {
 </script>
 </body>
 </html>
+

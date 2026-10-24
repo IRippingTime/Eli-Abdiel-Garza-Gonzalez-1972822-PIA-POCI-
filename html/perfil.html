@@ -24,11 +24,11 @@
 <div class="contenedor" style="max-width:640px;">
   <div class="page-hero">
     <div class="perfil-head">
-      <span class="avatar avatar-grande">P1</span>
+      <span id="profile-avatar" class="avatar avatar-grande">?</span>
       <div>
         <span class="rol-pill">Mi perfil</span>
-        <h2>Persona 1</h2>
-        <p class="meta"><span class="id-pill">ID: 7 (no editable)</span> Miembro desde 18 ago 2026 · Ultimo cambio 10 sep 2026</p>
+        <h2 id="profile-heading">Mi perfil</h2>
+        <p id="profile-meta" class="meta">Cargando perfil…</p>
       </div>
     </div>
   </div>
@@ -36,24 +36,31 @@
   <div class="tarjeta">
     <div id="aviso-perfil"></div>
     <h3>Editar informacion</h3>
-    <form onsubmit="return validarPerfil(event)">
+    <form id="form-perfil" onsubmit="return validarPerfil(event)">
       <label for="nombre">Nombre completo</label>
-      <input type="text" id="nombre" value="Persona 1">
+      <input type="text" id="nombre" autocomplete="name">
       <span class="error-msg" id="err-nombre"></span>
       <label for="email">Correo</label>
-      <input type="email" id="email" value="persona1@correo.com">
+      <input type="email" id="email" autocomplete="email" readonly>
       <span class="error-msg" id="err-email"></span>
       <div class="form-grid">
-        <div><label>Genero</label><select><option>Femenino</option><option>Masculino</option></select></div>
-        <div><label>Fecha de nacimiento</label><input type="date" value="2004-05-12"></div>
+        <div><label for="genero">Genero</label><select id="genero"><option value="" disabled selected>Selecciona…</option><option>Femenino</option><option>Masculino</option><option>Otro</option></select></div>
+        <div><label for="nacimiento">Fecha de nacimiento</label><input id="nacimiento" type="date"></div>
       </div>
-      <label>Foto avatar (URL)</label>
-      <input type="text" value="avatars/ana.png">
+      <label for="avatar_url">Foto avatar (URL)</label>
+      <input type="url" id="avatar_url" placeholder="https://...">
+      <label for="avatar_file">O subir una imagen a Cloudinary</label>
+      <input type="file" id="avatar_file" accept="image/jpeg,image/png,image/webp">
       <br><br><button class="btn" type="submit">Guardar cambios</button>
     </form>
   </div>
 </div>
 <footer>Perfil editable</footer>
+<script src="../js/api-client.js"></script>
+<script src="../js/data.js"></script>
 <script src="../js/validaciones.js"></script>
+<script src="../js/profile.js"></script>
 </body>
 </html>
+
+

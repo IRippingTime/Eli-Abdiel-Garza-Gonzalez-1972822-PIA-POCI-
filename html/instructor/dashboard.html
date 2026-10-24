@@ -24,30 +24,30 @@
 <div class="contenedor">
   <div class="page-hero">
     <div class="perfil-head">
-      <span class="avatar inst avatar-grande">I1</span>
+      <span id="avatar-instructor" class="avatar inst avatar-grande">IN</span>
       <div>
         <span class="rol-pill">Instructor</span>
-        <h2>Mis cursos ofrecidos</h2>
-        <p class="meta">Publica por niveles con video obligatorio y da de baja logica cuando lo decidas.</p>
+        <h2 id="saludo-instructor">Panel de instructor</h2>
+        <p class="meta">Consulta los cursos asociados a tu cuenta y publica nuevos cursos por niveles.</p>
       </div>
     </div>
-    <p><a class="btn" href="crear-curso.html">Crear curso</a> <a class="btn btn-secundario" href="ventas.html">Ver ventas</a></p>
+    <p><a class="btn" href="crear-curso.html">Crear curso</a></p>
   </div>
+  <div id="aviso-instructor" aria-live="polite"></div>
   <div class="stat-cards">
-    <div class="stat-card"><b>2</b><span>Cursos ofrecidos</span></div>
-    <div class="stat-card"><b class="naranja">320</b><span>Alumnos inscritos</span></div>
-    <div class="stat-card"><b>$155,800.00</b><span>Ingresos totales</span></div>
+    <div class="stat-card"><b id="instructor-course-total">—</b><span>Cursos asociados a mi cuenta</span></div>
   </div>
   <div class="tarjeta">
+    <h3>Mis cursos</h3>
     <table>
-      <tr><th>Titulo</th><th>Categoria</th><th>Niveles</th><th>Precio</th><th>Alumnos</th><th>Estado</th><th>Acciones</th></tr>
-      <tr><td>PHP desde Cero con POO y MVC</td><td>IT &amp; Software</td><td>5</td><td>$899.00</td><td>120</td><td>Activo</td><td><a href="crear-curso.html">Editar</a> | <a href="#" onclick="return confirmarEliminacion('Dar de baja logica el curso? Ya no aparecera en busquedas pero seguira en reportes y kardex.')">Baja logica</a></td></tr>
-      <tr><td>JavaScript Moderno y Fetch API</td><td>IT &amp; Software</td><td>4</td><td>Gratis</td><td>200</td><td>Activo</td><td><a href="crear-curso.html">Editar</a> | <a href="#" onclick="return confirmarEliminacion()">Baja logica</a></td></tr>
+      <thead><tr><th>Título</th><th>Categoría</th><th>Niveles</th><th>Precio</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody id="instructor-courses-body"><tr><td colspan="6">Cargando tus cursos…</td></tr></tbody>
     </table>
-    <p class="meta">La baja es logica: el curso ya no se consulta en busquedas ni en pantalla principal, pero se ve en reportes de ventas y kardex.</p>
   </div>
 </div>
-<footer>Perfil instructor</footer>
-<script src="../../js/validaciones.js"></script>
+<footer>Panel de instructor</footer>
+<script src="../../js/api-client.js"></script>
+<script src="../../js/data.js"></script>
+<script src="../../js/instructor.js"></script>
 </body>
 </html>

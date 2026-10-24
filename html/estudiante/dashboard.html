@@ -6,7 +6,7 @@
 <title>Panel Estudiante - EduCursos</title>
 <link rel="stylesheet" href="../../css/styles.css">
 </head>
-<body>
+<body data-required-role="estudiante">
 <header class="topbar">
   <div class="logo"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3L1 9l11 6 9-4.9V15h2V9L12 3z" fill="#ff6b00"/><path d="M5 13.2V17c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.8-7-3.8z" fill="#ff6b00"/></svg>Edu<span>Cursos</span></div>
   <nav class="nav">
@@ -24,52 +24,35 @@
 <div class="contenedor">
   <div class="page-hero">
     <div class="perfil-head">
-      <span class="avatar avatar-grande">P1</span>
+      <span id="student-avatar" class="avatar avatar-grande">ES</span>
       <div>
         <span class="rol-pill">Estudiante</span>
-        <h2>Hola, Persona 1</h2>
-        <p class="meta">Miembro desde 18 ago 2026 · Ultimo ingreso 12 sep 2026</p>
+        <h2 id="student-name">Mi panel</h2>
+        <p id="student-member" class="meta">Cargando perfil…</p>
       </div>
     </div>
     <p><a class="btn" href="kardex.html">Ver mi kardex</a> <a class="btn btn-secundario" href="../cursos.html">Buscar mas cursos</a></p>
   </div>
+  <div id="aviso-estudiante" aria-live="polite"></div>
+  <p id="session-notice" class="meta">Comprobando sesión…</p><p>Cuenta: <strong id="session-user">—</strong></p>
   <div class="stat-cards">
-    <div class="stat-card"><b>3</b><span>Cursos inscritos</span></div>
-    <div class="stat-card"><b class="naranja">1</b><span>Curso completado</span></div>
-    <div class="stat-card"><b>63%</b><span>Avance promedio</span></div>
+    <div class="stat-card"><b id="student-course-count">—</b><span>Cursos inscritos</span></div>
+    <div class="stat-card"><b id="student-completed-count" class="naranja">—</b><span>Cursos completados</span></div>
+    <div class="stat-card"><b id="student-average-progress">—</b><span>Avance promedio</span></div>
   </div>
   <br>
-  <div class="grid-3">
-    <div class="tarjeta">
-      <h3>PHP desde Cero</h3>
-      <p>Avance: 60% (3 de 5 niveles)</p>
-      <p class="meta">Inscrito: 18 ago 2026 | Ultimo ingreso: 12 sep 2026</p>
-      <p><a class="btn" href="../curso-detalle.html?id=101">Continuar nivel 4</a></p>
-    </div>
-    <div class="tarjeta">
-      <h3>JavaScript Moderno</h3>
-      <p>Avance: 100% - Completo</p>
-      <p class="meta">Terminado: 10 sep 2026</p>
-      <p><a class="btn btn-exito" href="../diploma.html">Ver diploma</a></p>
-    </div>
-    <div class="tarjeta">
-      <h3>Ingles Tecnico para TI</h3>
-      <p>Avance: 30%</p>
-      <p class="meta">Inscrito: 01 sep 2026</p>
-      <p><a class="btn" href="../curso-detalle.html?id=105">Continuar</a></p>
-    </div>
-  </div>
+  <div id="student-enrollments" class="grid-3"></div>
   <br>
   <div class="tarjeta">
-    <h3>Comprar curso con forma de pago (prototipo)</h3>
-    <label>Curso</label>
-    <select><option>Marketing Digital - $599.00</option><option>Diseno UI con Figma - $749.00</option></select>
-    <label>Forma de pago</label>
-    <select><option>Tarjeta</option><option>Transferencia</option><option>PayPal</option></select>
-    <br><br>
-    <button class="btn" onclick="alert('Compra registrada (prototipo). Se registraria fecha de inscripcion y avance en 0%.')">Pagar e inscribirme</button>
+    <h3>Inscripciones y pagos</h3>
+    <p class="meta">La inscripción y el procesamiento de pagos aún no están conectados. Puedes consultar los cursos publicados desde el catálogo.</p>
+    <a class="btn" href="../cursos.html">Explorar cursos</a>
   </div>
 </div>
 <footer>Perfil alumno - Kardex disponible en la seccion Kardex</footer>
+<script src="../../js/api-client.js"></script>
+<script src="../../js/data.js"></script>
+<script src="../../js/student.js"></script>
+<script src="../../js/session-page.js"></script>
 </body>
 </html>
