@@ -96,12 +96,14 @@ final class UserModel
     {
         if ($role === 'instructor') {
             $sql = 'SELECT u.id, u.full_name, u.email, u.created_at,
-                           (SELECT COUNT(*) FROM courses c WHERE c.instructor_id = u.id) AS course_count
+                           (SELECT COUNT(*) FROM courses c WHERE c.instructor_id = u.id) AS course_count,
+                           (SELECT COALESCE(SUM(p.amount),0) FROM payments p JOIN enrollments e ON e.id=p.enrollment_id JOIN courses c ON c.id=e.course_id WHERE c.instructor_id=u.id AND p.status=\'pagado\') AS revenue
                     FROM users u WHERE u.role = :role AND u.is_active = 1 ORDER BY u.created_at DESC';
         } else {
             $sql = 'SELECT u.id, u.full_name, u.email, u.created_at,
                            (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = u.id) AS enrollment_count,
-                           (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = u.id AND e.completed_at IS NOT NULL) AS completed_count
+                           (SELECT COUNT(*) FROM enrollments e WHERE e.student_id = u.id AND e.completed_at IS NOT NULL) AS completed_count,
+                           (SELECT CASE WHEN COUNT(*)=0 THEN 0 ELSE ROUND(SUM(e.completed_at IS NOT NULL)*100/COUNT(*),2) END FROM enrollments e WHERE e.student_id=u.id) AS completion_percent
                     FROM users u WHERE u.role = :role AND u.is_active = 1 ORDER BY u.created_at DESC';
         }
         $stmt = Database::connection()->prepare($sql);

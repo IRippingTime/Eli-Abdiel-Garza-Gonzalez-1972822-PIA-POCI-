@@ -12,7 +12,9 @@ final class CourseModel
     {
         $sql = 'SELECT c.id, c.title, c.description, c.price, c.image_url, c.published_at,
                        cat.id AS category_id, cat.name AS category, u.full_name AS instructor,
-                       (SELECT COUNT(*) FROM course_levels l WHERE l.course_id = c.id) AS level_count
+                       (SELECT COUNT(*) FROM course_levels l WHERE l.course_id = c.id) AS level_count,
+                       (SELECT AVG(r.rating) FROM course_reviews r JOIN enrollments e ON e.id=r.enrollment_id WHERE e.course_id=c.id AND r.deleted_at IS NULL) AS average_rating,
+                       (SELECT COUNT(*) FROM payments p JOIN enrollments e ON e.id=p.enrollment_id WHERE e.course_id=c.id AND p.status=\'pagado\') AS sold_count
                 FROM courses c JOIN categories cat ON cat.id = c.category_id
                 JOIN users u ON u.id = c.instructor_id
                 WHERE c.is_active = 1';
@@ -28,13 +30,14 @@ final class CourseModel
         return $stmt->fetchAll();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id, bool $includeInactive = false): ?array
     {
+        $inactiveFilter = $includeInactive ? '' : ' AND c.is_active = 1';
         $stmt = Database::connection()->prepare(
             'SELECT c.id, c.title, c.description, c.price, c.image_url, c.published_at, c.instructor_id,
                     cat.id AS category_id, cat.name AS category, u.full_name AS instructor
              FROM courses c JOIN categories cat ON cat.id = c.category_id
-             JOIN users u ON u.id = c.instructor_id WHERE c.id = :id AND c.is_active = 1'
+             JOIN users u ON u.id = c.instructor_id WHERE c.id = :id' . $inactiveFilter
         );
         $stmt->execute(['id' => $id]);
         $course = $stmt->fetch();
@@ -44,6 +47,13 @@ final class CourseModel
         $course['levels'] = $levels->fetchAll();
         $course['level_count'] = count($course['levels']);
         return $course;
+    }
+
+    public function studentCanAccess(int $courseId, int $studentId): bool
+    {
+        $stmt = Database::connection()->prepare("SELECT (c.price=0 AND EXISTS(SELECT 1 FROM enrollments e WHERE e.course_id=c.id AND e.student_id=:student)) OR EXISTS(SELECT 1 FROM enrollments e JOIN payments p ON p.enrollment_id=e.id AND p.status='pagado' WHERE e.course_id=c.id AND e.student_id=:student_paid) FROM courses c WHERE c.id=:course");
+        $stmt->execute(['student' => $studentId, 'student_paid' => $studentId, 'course' => $courseId]);
+        return (bool)$stmt->fetchColumn();
     }
 
     public function idByTitle(string $title): ?int
@@ -93,5 +103,11 @@ final class CourseModel
             throw $e;
         }
     }
-}
 
+    public function setActive(int $courseId, int $instructorId, bool $active): bool
+    {
+        $stmt = Database::connection()->prepare('UPDATE courses SET is_active=:active WHERE id=:id AND instructor_id=:instructor');
+        $stmt->execute(['active' => $active ? 1 : 0, 'id' => $courseId, 'instructor' => $instructorId]);
+        return $stmt->rowCount() > 0;
+    }
+}

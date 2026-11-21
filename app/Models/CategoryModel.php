@@ -25,5 +25,19 @@ final class CategoryModel
         $stmt->execute(['id' => $id]);
         return (bool)$stmt->fetchColumn();
     }
+
+    public function update(int $id, string $name, ?string $description): bool
+    {
+        $stmt = Database::connection()->prepare('UPDATE categories SET name=:name, description=:description WHERE id=:id');
+        $stmt->execute(['id' => $id, 'name' => $name, 'description' => $description]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function delete(int $id): bool
+    {
+        $stmt = Database::connection()->prepare('DELETE FROM categories WHERE id=:id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() > 0;
+    }
 }
 

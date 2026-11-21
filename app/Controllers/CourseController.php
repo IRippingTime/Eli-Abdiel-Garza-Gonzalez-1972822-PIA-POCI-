@@ -30,8 +30,18 @@ final class CourseController
 
     public function show(int $id): never
     {
-        $course = (new CourseModel())->find($id);
+        $model = new CourseModel();
+        $sessionUser = $_SESSION['user'] ?? null;
+        $course = $model->find($id, is_array($sessionUser) && ($sessionUser['role'] ?? '') === 'estudiante');
         if (!$course) ApiResponse::error('Curso no encontrado o inactivo.', 404);
+        $user = $sessionUser;
+        $course['has_access'] = is_array($user) && $user['role'] !== 'estudiante'
+            ? true
+            : (is_array($user) && $user['role'] === 'estudiante' && $model->studentCanAccess($id, (int)$user['id']));
+        if (!$course['has_access']) {
+            foreach ($course['levels'] as &$level) unset($level['video_url']);
+            unset($level);
+        }
         ApiResponse::send(['ok' => true, 'data' => $course]);
     }
 
@@ -40,6 +50,13 @@ final class CourseController
         $user = (new AuthMiddleware())->requireRole(['instructor', 'administrador']);
         $courses = (new CourseModel())->listByInstructor((int)$user['id']);
         ApiResponse::send(['ok' => true, 'total' => count($courses), 'data' => $courses]);
+    }
+
+    public function deactivate(int $id): never
+    {
+        $user = (new AuthMiddleware())->requireRole(['instructor', 'administrador']);
+        if (!(new CourseModel())->setActive($id, (int)$user['id'], false)) ApiResponse::error('No se encontró un curso activo de esta cuenta.', 404);
+        ApiResponse::send(['ok' => true, 'message' => 'Curso dado de baja. Se conserva en el Kardex y los reportes.']);
     }
 
     public function create(): never
@@ -72,6 +89,9 @@ final class CourseController
             $levelPrice = isset($level['price']) ? filter_var($level['price'], FILTER_VALIDATE_FLOAT) : null;
             if (isset($level['price']) && ($levelPrice === false || $levelPrice < 0)) {
                 ApiResponse::error('El costo de cada nivel debe ser un número igual o mayor que cero.', 400);
+            }
+            if ((float)$price === 0.0 && $levelPrice !== null && (float)$levelPrice > 0) {
+                ApiResponse::error('Esta versión admite cobro por curso completo; no captures precios por nivel en cursos gratuitos.', 400);
             }
             $normalizedLevels[] = [
                 'title' => substr($levelTitle, 0, 180),
