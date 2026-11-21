@@ -82,7 +82,7 @@ async function cargarCategoriasAdmin() {
   try {
     const result = await apiRequest("/categories");
     body.innerHTML = "";
-    if (!result.data.length) body.innerHTML = '<tr><td colspan="5">No hay categorías.</td></tr>';
+      if (!result.data.length) body.innerHTML = '<tr><td colspan="6">No hay categorías.</td></tr>';
     result.data.forEach(function (category) {
       const row = document.createElement("tr");
       [category.id, category.name, category.description || "—", category.created_by_name || "Sistema", category.created_at].forEach(function (value) {
@@ -90,6 +90,34 @@ async function cargarCategoriasAdmin() {
         cell.textContent = value;
         row.appendChild(cell);
       });
+      const actions = document.createElement("td");
+      const edit = document.createElement("button");
+      edit.className = "btn btn-mini";
+      edit.textContent = "Editar";
+      edit.addEventListener("click", async function () {
+        const name = prompt("Nombre de la categoría", category.name);
+        if (name === null) return;
+        const description = prompt("Descripción", category.description || "");
+        if (description === null) return;
+        try {
+          const updated = await apiRequest("/categories/" + category.id, { method: "PUT", body: JSON.stringify({ name: name.trim(), description: description.trim() }) });
+          mostrarAviso("aviso-categorias", updated.message, "ok");
+          await cargarCategoriasAdmin();
+        } catch (error) { mostrarAviso("aviso-categorias", error.message); }
+      });
+      const remove = document.createElement("button");
+      remove.className = "btn btn-mini btn-secundario";
+      remove.textContent = "Eliminar";
+      remove.addEventListener("click", async function () {
+        if (!confirm("¿Eliminar la categoría «" + category.name + "»? No se puede eliminar si tiene cursos asociados.")) return;
+        try {
+          const deleted = await apiRequest("/categories/" + category.id, { method: "DELETE" });
+          mostrarAviso("aviso-categorias", deleted.message, "ok");
+          await cargarCategoriasAdmin();
+        } catch (error) { mostrarAviso("aviso-categorias", error.message); }
+      });
+      actions.append(edit, remove);
+      row.appendChild(actions);
       body.appendChild(row);
     });
   } catch (error) {
@@ -133,7 +161,7 @@ async function cargarReporteUsuarios(role) {
     if (!result.data.length) {
       const row = document.createElement("tr");
       const cell = document.createElement("td");
-      cell.colSpan = role === "instructor" ? 4 : 5;
+      cell.colSpan = role === "instructor" ? 5 : 6;
       cell.textContent = "No hay cuentas activas de este tipo.";
       row.appendChild(cell);
       body.appendChild(row);
@@ -141,8 +169,8 @@ async function cargarReporteUsuarios(role) {
     }
     result.data.forEach(function (user) {
       const cells = role === "instructor"
-        ? [user.email, user.full_name, reportDate(user.created_at), String(user.course_count)]
-        : [user.email, user.full_name, reportDate(user.created_at), String(user.enrollment_count), String(user.completed_count)];
+        ? [user.email, user.full_name, reportDate(user.created_at), String(user.course_count), reportMoney(user.revenue)]
+        : [user.email, user.full_name, reportDate(user.created_at), String(user.enrollment_count), String(user.completed_count), Number(user.completion_percent || 0).toFixed(1) + "%"];
       const row = document.createElement("tr");
       cells.forEach(function (value) {
         const cell = document.createElement("td");
@@ -155,7 +183,7 @@ async function cargarReporteUsuarios(role) {
     body.replaceChildren();
     const row = document.createElement("tr");
     const cell = document.createElement("td");
-    cell.colSpan = role === "instructor" ? 4 : 5;
+    cell.colSpan = role === "instructor" ? 5 : 6;
     cell.textContent = error.message;
     row.appendChild(cell);
     body.appendChild(row);
@@ -163,6 +191,8 @@ async function cargarReporteUsuarios(role) {
 }
 
 function reportDate(value) {
-  const date = String(value || "").slice(0, 10);
-  return date ? date.split("-").reverse().join("/") : "—";
+  if (!value) return "—";
+  const date = new Date(String(value).replace(" ", "T"));
+  return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat("es-MX", { day: "2-digit", month: "short", year: "numeric" }).format(date).replace(" de ", " ");
 }
+function reportMoney(value) { return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(Number(value || 0)); }

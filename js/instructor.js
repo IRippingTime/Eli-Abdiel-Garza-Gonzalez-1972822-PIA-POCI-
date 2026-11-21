@@ -52,6 +52,20 @@ async function cargarPanelInstructor() {
       link.href = "../curso-detalle.html?id=" + encodeURIComponent(course.id);
       link.textContent = "Ver curso";
       action.appendChild(link);
+      if (Number(course.is_active)) {
+        const deactivate = document.createElement("button");
+        deactivate.className = "btn btn-mini btn-secundario";
+        deactivate.textContent = "Dar de baja";
+        deactivate.addEventListener("click", async function () {
+          if (!confirm("¿Dar de baja «" + course.title + "»? Dejará de aparecer en el catálogo, pero seguirá en el Kardex.")) return;
+          try {
+            const response = await apiRequest("/instructor/courses/" + course.id + "/deactivate", { method: "POST" });
+            mostrarAviso("aviso-instructor", response.message, "ok");
+            await cargarPanelInstructor();
+          } catch (error) { mostrarAviso("aviso-instructor", error.message); }
+        });
+        action.appendChild(deactivate);
+      }
       row.appendChild(action);
       body.appendChild(row);
     });
