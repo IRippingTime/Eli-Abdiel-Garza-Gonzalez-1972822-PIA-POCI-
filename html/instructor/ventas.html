@@ -30,12 +30,22 @@
     <p><a class="btn btn-secundario" href="dashboard.html">Volver a mis cursos</a></p>
   </div>
   <div class="tarjeta">
-    <h3>Reporte de ventas no disponible</h3>
-    <p>La aplicación todavía no registra pagos ni transacciones. Por eso no puede calcular alumnos con compra o ingresos reales.</p>
+    <h3>Filtros</h3>
+    <div class="grid-3">
+      <div><label for="sales-from">Cursos publicados desde</label><input type="date" id="sales-from"></div>
+      <div><label for="sales-to">Hasta</label><input type="date" id="sales-to"></div>
+      <div><label for="sales-category">Categoría</label><select id="sales-category"><option value="">Todas</option></select></div>
+      <div><label for="sales-active">Estado</label><select id="sales-active"><option value="">Todos</option><option value="1">Solo activos</option><option value="0">Solo inactivos</option></select></div>
+    </div>
+    <button id="sales-refresh" class="btn" type="button">Aplicar filtros</button>
+    <div id="aviso-ventas" aria-live="polite"></div>
   </div>
+  <div class="tarjeta"><h3>Resumen por curso</h3><table><thead><tr><th>Curso</th><th>Alumnos</th><th>Avance promedio</th><th>Ingresos</th><th>Transferencias</th><th>Tarjeta</th></tr></thead><tbody id="sales-summary"><tr><td colspan="6">Cargando…</td></tr></tbody></table><p id="sales-total"></p></div>
+  <div class="tarjeta"><h3>Detalle de inscripciones pagadas</h3><table><thead><tr><th>Curso</th><th>Alumno</th><th>Fecha de inscripción</th><th>Avance</th><th>Pagado</th><th>Forma de pago</th></tr></thead><tbody id="sales-detail"><tr><td colspan="6">Cargando…</td></tr></tbody></table></div>
 </div>
 <footer>Reporte de ventas</footer>
 <script src="../../js/api-client.js"></script>
 <script src="../../js/session-page.js"></script>
+<script src="../../js/ventas.js"></script>
 </body>
 </html>

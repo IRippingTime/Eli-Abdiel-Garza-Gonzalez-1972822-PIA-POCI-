@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Solicitudes de pago - EduCursos</title><link rel="stylesheet" href="../../css/styles.css"></head>
+<body data-required-role="administrador">
+<header class="topbar"><div class="logo">Edu<span>Cursos</span></div><nav class="nav"><a href="../index.html">Inicio</a><a href="dashboard.html" class="activo">Admin</a><a href="../cursos.html">Cursos</a></nav></header>
+<div class="contenedor"><div class="page-hero"><span class="rol-pill">Administrador</span><h2>Solicitudes de pago</h2><p id="session-notice" class="meta">Comprobando sesión…</p><p>Cuenta: <strong id="session-user">—</strong></p><p>Confirma únicamente después de verificar el pago fuera del sistema. Esta versión no procesa cargos ni comprobantes.</p><a class="btn btn-secundario" href="dashboard.html">Volver al panel</a></div><div id="aviso-pagos" aria-live="polite"></div><div class="tarjeta"><table><thead><tr><th>Curso</th><th>Estudiante</th><th>Monto</th><th>Método solicitado</th><th>Fecha</th><th>Acción</th></tr></thead><tbody id="pagos-pendientes"><tr><td colspan="6">Cargando…</td></tr></tbody></table></div></div>
+<script src="../../js/api-client.js"></script><script src="../../js/session-page.js"></script><script src="../../js/pagos-admin.js"></script>
+</body></html>
