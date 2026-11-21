@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "EduCursos - Segundo avance",
-    "description": "Pruebas de registro, sesión, cursos, categorías, perfil y Cloudinary. La cookie de sesión se conserva automáticamente por Postman.",
+    "name": "EduCursos - Entrega final",
+    "description": "Colección de avance final. Inicia sesión con el rol requerido antes de ejecutar cada ruta; Postman conserva la cookie PHP. Las solicitudes de pago son demostrativas y requieren confirmación manual.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -15,6 +15,30 @@
     },
     {
       "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "enrollmentId",
+      "value": "1"
+    },
+    {
+      "key": "levelId",
+      "value": "1"
+    },
+    {
+      "key": "paymentId",
+      "value": "1"
+    },
+    {
+      "key": "recipientId",
+      "value": "2"
+    },
+    {
+      "key": "reviewId",
+      "value": "1"
+    },
+    {
+      "key": "categoryId",
       "value": "1"
     }
   ],
@@ -223,6 +247,189 @@
         "url": "{{baseUrl}}/api/v1/admin/reports/users?role=estudiante",
         "description": "Requiere iniciar sesión como administrador. Devuelve el reporte de estudiantes activos."
       }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/student/enrollments",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"course_id\":{{courseId}}}"
+        }
+      },
+      "name": "Inscribir curso gratuito"
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/student/enrollments/{{enrollmentId}}/progress",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"level_id\":{{levelId}}}"
+        }
+      },
+      "name": "Registrar avance de nivel"
+    },
+    {
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/student/courses/{{courseId}}/purchase",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"payment_method\":\"transferencia\"}"
+        }
+      },
+      "name": "Solicitar compra de curso"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/instructor/sales?view=summary",
+        "method": "GET"
+      },
+      "name": "Ventas resumen"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/instructor/sales?view=detail",
+        "method": "GET"
+      },
+      "name": "Ventas detalle"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/messages/contacts",
+        "method": "GET"
+      },
+      "name": "Contactos de mensajería"
+    },
+    {
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/messages",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"recipient_id\":{{recipientId}},\"body\":\"Tengo una pregunta sobre el curso.\"}"
+        }
+      },
+      "name": "Enviar mensaje"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/courses/{{courseId}}/reviews",
+        "method": "GET"
+      },
+      "name": "Consultar opiniones de curso"
+    },
+    {
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/student/reviews",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"enrollment_id\":{{enrollmentId}},\"rating\":5,\"comment\":\"Buen curso.\"}"
+        }
+      },
+      "name": "Publicar opinión"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/admin/payments",
+        "method": "GET"
+      },
+      "name": "Solicitudes de pago pendientes"
+    },
+    {
+      "request": {
+        "description": "Solo confirma después de verificar el pago fuera del sistema.",
+        "method": "POST",
+        "url": "{{baseUrl}}/api/v1/admin/payments/{{paymentId}}/confirm"
+      },
+      "name": "Confirmar pago ya verificado"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/admin/reviews",
+        "method": "GET"
+      },
+      "name": "Listar comentarios para moderación"
+    },
+    {
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/admin/reviews/{{reviewId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"reason\":\"Contenido ofensivo\"}"
+        }
+      },
+      "name": "Eliminar comentario con causa"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/instructor/courses/{{courseId}}/deactivate",
+        "method": "POST"
+      },
+      "name": "Dar de baja curso"
+    },
+    {
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/categories/{{categoryId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"Diseño\",\"description\":\"Cursos de diseño.\"}"
+        }
+      },
+      "name": "Editar categoría"
+    },
+    {
+      "request": {
+        "url": "{{baseUrl}}/api/v1/categories/{{categoryId}}",
+        "method": "DELETE"
+      },
+      "name": "Eliminar categoría"
     }
   ]
 }
