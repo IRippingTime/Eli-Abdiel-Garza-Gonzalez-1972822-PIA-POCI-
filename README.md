@@ -1,62 +1,69 @@
 # Integrantes del equipo:
-- Nombre: Elí Abdiel Garza González
-- Matricula: 1972822
 
-# EduCursos - Segundo avance
+Nombre: Elí Abdiel Garza González
+Matricula: 1972822
 
-## Preparar el entorno
+# EduCursos
 
-1. Instala PHP 8.1 o posterior con PDO, pdo_mysql y OpenSSL habilitado, y MySQL 8.
-2. Ejecuta db/schema.sql en MySQL. Crea las tablas, relaciones y categorías iniciales.
-3. Copia config/.env.example a config/.env y configura MySQL. Para Cloudinary, desde PowerShell ejecuta `Set-Location "C:\Users\eliab\OneDrive\Escritorio\PIA POCI\config"` y luego `npx.cmd @cloudinary/cloud`; el proyecto lee `CLOUDINARY_URL` automáticamente. Reclama el cloud desde el enlace que genera en menos de 24 horas.
-4. Crea la primera cuenta administradora con php scripts/create-admin.php. Para una base de demostración con cuentas y cursos de ejemplo, puedes ejecutar php scripts/seed-demo.php; las contraseñas temporales se muestran solo si el script crea cuentas nuevas.
-   Si los cursos de demostración ya existen, actualiza sus videos con php scripts/update-demo-videos.php; las ligas fuente están en scripts/demo-videos.php.
-5. Inicia el servidor con iniciar-servidor.bat o php -d extension=php_openssl.dll -S localhost:8000 router.php.
-6. Abre http://localhost:8000/html/index.html. La API está en http://localhost:8000/api/v1.
+Portal web de cursos en línea desarrollado para el Proyecto Integrador de Aprendizaje de Programación Web Capa Intermedia.
 
-## Requisitos implementados
+## Tecnologías
 
-- PHP puro, POO, MVC y enrutamiento frontal.
-- PDO/MySQL accedido únicamente desde los modelos.
-- API REST en JSON para cursos, categorías, autenticación y perfil.
-- Registro, inicio/cierre de sesión y consulta de sesión; contraseñas con password_hash.
-- Bloqueo al tercer intento consecutivo; ruta administrativa para reactivar.
-- Middleware CORS explícito y middleware de sesión/rol antes de operaciones protegidas.
-- Consumo de la API desde el cliente mediante fetch, sin recarga, con errores visibles.
-- Integración de Cloudinary para cargar imágenes desde PHP. Las claves quedan en config/.env.
-- Colección Postman en postman/EduCursos-Segundo-Avance.postman_collection.json.
+- PHP 8.1 o posterior, con PDO, `pdo_mysql` y OpenSSL.
+- MySQL 8.
+- HTML, CSS y JavaScript; el cliente consume la API propia con `fetch`.
+- Cloudinary para guardar imágenes de cursos y perfiles.
 
-## Cuentas y seguridad
+## Estructura del proyecto
 
-Cloudinary fue aprobado para la integración, según la documentación del curso. No se incluyen contraseñas predeterminadas ni claves de servicio. Registra estudiantes e instructores en el portal. Crea el administrador mediante el script indicado. No subas config/.env; comparte únicamente .env.example.
+```text
+api/                 Entrada de la API
+app/                 Router, controladores, modelos, middleware y servicios
+config/              Plantilla de configuración; .env local no se comparte
+css/                 Estilos del portal
+db/                  Esquema MySQL y consultas de lectura
+docs/                 Manuales, contrato de API y estado de entrega
+evidencias/           Evidencias del segundo avance
+html/                Páginas organizadas por rol
+img/                 Recursos gráficos del catálogo
+js/                  Cliente API y lógica de interfaz
+postman/             Colección de peticiones
+scripts/             Creación de administrador y datos de demostración
+router.php            Servidor local y front controller
+iniciar-servidor.bat  Inicio rápido en Windows
+```
 
-La ruta POST /api/v1/admin/users/{id}/unlock reactiva una cuenta y restablece los intentos.
+## Instalación local
 
-## Rutas principales
+1. Instala PHP 8.1+, MySQL 8 y habilita `PDO`, `pdo_mysql` y OpenSSL.
+2. Ejecuta `db/schema.sql` en MySQL. Para una base existente, respalda los datos y aplica los cambios de esquema antes de usar las funciones nuevas.
+3. Copia `config/.env.example` como `config/.env` y configura las variables de MySQL y Cloudinary. El archivo `.env` contiene secretos y está excluido de Git.
+4. Crea un administrador ejecutando `php scripts/create-admin.php` desde la raíz.
+5. Opcionalmente, carga datos de demostración con `php scripts/seed-demo.php`. El script de actualización de videos es `php scripts/update-demo-videos.php`.
+6. Inicia con `iniciar-servidor.bat` o ejecuta `php -S localhost:8000 router.php` desde la raíz.
+7. Abre `http://localhost:8000/html/index.html`. La base de la API es `http://localhost:8000/api/v1`.
 
-| Método | Ruta | Acceso | Uso |
-|---|---|---|---|
-| GET | /api/v1/courses | Público | Cursos activos; admite category, q, instructor, from, to |
-| GET | /api/v1/courses/{id} | Público | Detalle, niveles y URL de video |
-| POST | /api/v1/courses | Instructor/administrador | Crea curso y niveles |
-| GET | /api/v1/categories | Público | Lista categorías |
-| POST | /api/v1/categories | Administrador | Crea categoría |
-| POST | /api/v1/auth/register | Público | Crea estudiante o instructor |
-| POST | /api/v1/auth/login | Público | Inicia sesión |
-| POST | /api/v1/auth/logout | Sesión | Cierra sesión |
-| GET | /api/v1/auth/me | Sesión | Consulta la sesión |
-| GET/PUT | /api/v1/profile | Sesión | Consulta y actualiza el perfil |
-| POST | /api/v1/uploads/image | Sesión | Sube JPG/PNG/WebP de hasta 5 MB a Cloudinary |
-| POST | /api/v1/admin/users/{id}/unlock | Administrador | Reactiva cuenta |
+No agregues `config/.env`, `importante.txt` ni contraseñas al ZIP de entrega o al repositorio. Comparte solo `config/.env.example`.
 
-Contrato detallado y códigos: docs/api-segundo-avance.md.
+## Funciones incluidas
 
-## Middleware y MVC
+- Catálogo de cursos y categorías, registro e inicio de sesión por rol.
+- Creación y baja lógica de cursos; inscripciones gratuitas y avance por nivel.
+- Solicitudes de compra de curso completo por transferencia o tarjeta demostrativa. No se realizan cargos: el administrador valida el pago fuera del portal y confirma la solicitud.
+- Kardex del estudiante, reportes de ventas y de usuarios, opiniones con moderación administrativa y mensajes entre usuarios con cursos compartidos.
+- Diploma al completar el curso. Cada diploma tiene un botón para imprimirlo o guardarlo como PDF desde el diálogo de impresión del navegador.
+- Carga de imágenes mediante Cloudinary desde el servidor; el video se enlaza con una URL HTTPS.
 
-router.php sirve archivos estáticos y reenvía las demás rutas a api/index.php. Orden: CORS, router/recurso, middleware de sesión y rol, controlador, modelo PDO y respuesta JSON. CORS responde OPTIONS antes del enrutamiento.
+## Documentación y herramientas
 
-## Integración Cloudinary
+- `docs/word/Documentacion-Completa.docx`: manual de implementación y operación.
+- `docs/api-segundo-avance.md`: contrato de API y ejemplos de endpoints.
+- `docs/estado-entrega-final.md`: alcance implementado y límites conocidos.
+- `postman/EduCursos-Segundo-Avance.postman_collection.json`: colección de peticiones; hay que ejecutarla contra la instancia final para registrar sus resultados.
+- `docs/checklist-segundo-avance.md`, `docs/guia-demostracion-segundo-avance.md` y `evidencias/segundo-avance/`: material histórico del segundo avance.
 
-La carga usa una firma generada en servidor. Acepta CLOUDINARY_URL (formato oficial `cloudinary://...`) o las tres variables CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY y CLOUDINARY_API_SECRET. Mantén las credenciales en config/.env; no las compartas ni las incluyas en Git.
+La arquitectura usa `router.php` como entrada, `app/Core/Router.php` para despachar rutas, controladores para validar y coordinar, modelos PDO para la base de datos y respuestas JSON. El diagrama actualizado es `docs/arquitectura-mvc-actual.svg`; el diagrama anterior `docs/arquitectura-tres-capas.svg` se conserva como antecedente.
+
+
 
 
